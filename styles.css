@@ -1,10 +1,22 @@
+/* =========================
+   Tema / Tokens
+   ========================= */
 :root{
   --bg:#0a0a0a; --panel:#121212; --accent:#ef4444; --muted:#a3a3a3; --text:#f5f5f5; --chip:#1a1a1a; --ring:rgba(239,68,68,.35);
   --type-normal:#A8A77A; --type-fire:#EE8130; --type-water:#6390F0; --type-electric:#F7D02C; --type-grass:#7AC74C; --type-ice:#96D9D6;
   --type-fighting:#C22E28; --type-poison:#A33EA1; --type-ground:#E2BF65; --type-flying:#A98FF3; --type-psychic:#F95587; --type-bug:#A6B91A;
   --type-rock:#B6A136; --type-ghost:#735797; --type-dragon:#6F35FC; --type-dark:#705746; --type-steel:#B7B7CE; --type-fairy:#D685AD;
 }
-*{box-sizing:border-box}
+
+/* Segurança global contra overflow horizontal */
+html, body{max-width:100%; overflow-x:hidden;}
+@supports (overflow-x: clip){ html, body{ overflow-x: clip; } }
+
+*{box-sizing:border-box; min-width:0}
+
+/* =========================
+   Base
+   ========================= */
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans";
@@ -12,7 +24,9 @@ body{
   color:var(--text);
 }
 
-/* ===== Header ===== */
+/* =========================
+   Header + Tabs
+   ========================= */
 header{
   padding:16px clamp(16px,3vw,32px);
   display:grid;
@@ -23,14 +37,14 @@ header{
   gap:12px 16px;
   border-bottom:1px solid rgba(255,255,255,.06);
   backdrop-filter:blur(6px);
-  position:sticky;top:0;z-index:10;
+  position:sticky; top:0; z-index:10;
   background:linear-gradient(180deg, rgba(18,18,18,.92), rgba(18,18,18,.7));
 }
 .title{grid-area:title;display:flex;align-items:center;gap:12px}
 .logo{width:32px;height:32px;border-radius:10px;background:conic-gradient(from 210deg,#ef4444,#ffffff,#7f1d1d,#ef4444);box-shadow:0 0 0 2px rgba(255,255,255,.12) inset}
 h1{font-size:clamp(16px,2.2vw,24px);margin:0;font-weight:800;letter-spacing:.2px}
 
-/* Top nav (tabs) */
+/* Tabs no topo */
 .topnav{grid-area:nav;display:flex;gap:8px;align-items:center}
 .tab{
   background:var(--chip); color:var(--text);
@@ -40,7 +54,7 @@ h1{font-size:clamp(16px,2.2vw,24px);margin:0;font-weight:800;letter-spacing:.2px
 .tab.active{outline:2px solid var(--accent); background:linear-gradient(180deg,rgba(239,68,68,.12),rgba(255,255,255,.02))}
 .tab:hover{border-color:rgba(255,255,255,.3)}
 
-/* Controles */
+/* Controles globais */
 .controls{grid-area:controls;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .control{display:flex;flex-direction:column;gap:6px}
 label{font-size:12px;color:var(--muted)}
@@ -52,11 +66,14 @@ select,input[type="search"]{
 select:focus,input[type="search"]:focus{border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
 input[type="search"]{min-width:220px}
 
-/* ===== Layout principal (sem sidebar) ===== */
+/* =========================
+   Layout principal (sem sidebar)
+   ========================= */
 .layout{display:grid;grid-template-columns: 360px 1fr; gap:16px; padding:16px}
 @media (max-width:1100px){ .layout{grid-template-columns: 320px 1fr;} }
 @media (max-width:900px){ .layout{grid-template-columns:1fr} #listPanel{order:1} .right{order:2} }
 
+/* Painéis genéricos */
 .panel{
   background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0));
   border:1px solid rgba(255,255,255,.08);
@@ -64,49 +81,90 @@ input[type="search"]{min-width:220px}
   padding:14px;
   box-shadow:0 10px 30px rgba(0,0,0,.25) inset,0 8px 24px rgba(0,0,0,.25)
 }
-.panel-header{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px;padding:6px 8px;margin-bottom:8px;background:rgba(255,255,255,.06);border-radius:10px}
-.panel-header .left{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.btn{background:var(--chip);border:1px solid rgba(255,255,255,.12);color:var(--text);border-radius:10px;padding:8px 10px;cursor:pointer}
+.btn{background:var(--chip);border:1px solid rgba(255,255,255,.12);color:var(--text);border-radius:10px;padding:8px 12px;cursor:pointer}
 .btn:hover{border-color:rgba(255,255,255,.3)}
 
-/* ===== Lista ===== */
-.list{display:flex;flex-direction:column;gap:10px;max-height: clamp(200px, 34dvh, 52dvh);overflow:auto;padding-right:4px}
-.poke-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;background:var(--chip);border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:transform .08s ease,background .2s ease,border-color .2s;color:var(--text)}
-.poke-item:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18)}
-.poke-item.active{outline:2px solid var(--accent);background:linear-gradient(180deg,rgba(239,68,68,.12),rgba(255,255,255,.02))}
-.poke-item.team-selected{border-color:rgba(239,68,68,.6)}
-.pill{font-size:11px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);color:#f1f1f1;border:1px solid rgba(255,255,255,.12)}
-.thumb{width:32px;height:32px;image-rendering:pixelated}
+/* =========================
+   Cabeçalho da lista
+   ========================= */
+.panel-header{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; flex-wrap:wrap; min-width:0;
+  font-weight:600; font-size:14px; padding:6px 8px; margin-bottom:8px;
+  background:rgba(255,255,255,.06); border-radius:10px;
+}
+.panel-header .left{
+  display:flex; align-items:center; gap:10px; flex:1 1 auto; min-width:0;
+}
+#toggleListBtn{
+  flex:0 0 auto; white-space:nowrap; padding-inline:12px;
+}
 
-.range-indicator{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Indicador de faixas (001–151 | …) */
+.range-indicator{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1 1 100%;min-width:0;overflow-wrap:anywhere;white-space:normal}
 .range-indicator .seg{font-size:11px;padding:4px 8px;border-radius:999px;background:var(--chip);color:var(--muted);border:1px solid rgba(255,255,255,.12);cursor:pointer}
 .range-indicator .seg.active{color:#f5f5f5;background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.45)}
 .range-indicator .seg:hover{border-color:rgba(255,255,255,.35)}
 .range-indicator .sep{color:var(--muted);opacity:.55}
 
-/* recolher lista */
+/* Ao recolher a lista */
 #listPanel.collapsed .list, #listPanel.collapsed .status{display:none}
 #listPanel.collapsed .panel-header{background:rgba(255,255,255,.04)}
 
-/* ===== Arte e meta ===== */
+/* =========================
+   Lista de Pokémon
+   ========================= */
+.list{display:flex;flex-direction:column;gap:10px;max-height: clamp(220px, 40vh, 58vh);overflow:auto;padding-right:4px}
+.poke-item{
+  position:relative;
+  display:flex;align-items:center;gap:10px;
+  padding:10px;border-radius:14px;background:var(--chip);
+  border:1px solid rgba(255,255,255,.06);
+  cursor:pointer;transition:transform .08s ease,background .2s ease,border-color .2s; color:var(--text);
+  width:100%;
+}
+.poke-item:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18)}
+/* destaque sem cortar bordas */
+.poke-item.active{
+  outline:none;
+  box-shadow:0 0 0 2px rgba(239,68,68,.75) inset;
+  background:linear-gradient(180deg,rgba(239,68,68,.12),rgba(255,255,255,.02));
+  border-color:rgba(239,68,68,.35);
+}
+.poke-item.active::after{
+  content:""; position:absolute; inset:0; border-radius:inherit;
+  box-shadow:0 0 0 1px rgba(239,68,68,.25); pointer-events:none;
+}
+.poke-item.team-selected{border-color:rgba(239,68,68,.6)}
+
+.pill{font-size:11px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);color:#f1f1f1;border:1px solid rgba(255,255,255,.12)}
+.thumb{width:32px;height:32px;image-rendering:pixelated}
+
+/* =========================
+   Arte e metadados
+   ========================= */
 .artbox{display:grid;grid-template-rows:auto 1fr auto;gap:8px;min-height:420px}
+/* MOBILE/PORTRAIT: tela estável (sem deslocar a página) */
 .art-viewport{
-  position:relative;display:grid;place-items:center;
+  position:relative; overflow:hidden;
+  aspect-ratio: 1 / 1;       /* estável no mobile */
+  max-width:100%; height:auto; min-height:280px; max-height:66dvh;
   background:radial-gradient(600px 320px at 50% 10%, rgba(239,68,68,.15), transparent 40%),linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
   border-radius:16px;border:1px solid rgba(255,255,255,.1);
-  height: clamp(280px, 66dvh, 620px);
 }
-.art-viewport img{display:block;height:70%;width:auto;object-fit:contain;filter:drop-shadow(0 40px 50px rgba(0, 0, 0, .35));transition:opacity .18s ease}
+.art-viewport img{display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;object-position:center;filter:drop-shadow(0 40px 50px rgba(0,0,0,.35));transition:opacity .18s ease}
 .art-viewport img.fading{opacity:0}
 .art-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
-/* Badges / types */
+/* Badges / tipos */
 .badges{display:flex;flex-wrap:wrap;gap:8px}
 .badge{padding:5px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08);font-size:12px;color:#0b0b0b}
 .badge.neutral{background:var(--chip);color:#f1f1f1}
 .type-badge.type-normal{background:var(--type-normal)} .type-badge.type-fire{background:var(--type-fire)} .type-badge.type-water{background:var(--type-water)} .type-badge.type-electric{background:var(--type-electric)} .type-badge.type-grass{background:var(--type-grass)} .type-badge.type-ice{background:var(--type-ice)} .type-badge.type-fighting{background:var(--type-fighting);color:#fff} .type-badge.type-poison{background:var(--type-poison);color:#fff} .type-badge.type-ground{background:var(--type-ground)} .type-badge.type-flying{background:var(--type-flying)} .type-badge.type-psychic{background:var(--type-psychic)} .type-badge.type-bug{background:var(--type-bug)} .type-badge.type-rock{background:var(--type-rock)} .type-badge.type-ghost{background:var(--type-ghost);color:#fff} .type-badge.type-dragon{background:var(--type-dragon);color:#fff} .type-badge.type-dark{background:var(--type-dark);color:#fff} .type-badge.type-steel{background:var(--type-steel)} .type-badge.type-fairy{background:var(--type-fairy)}
 
-/* Info */
+/* =========================
+   Info (habilidades, stats, evolução)
+   ========================= */
 .art-info{margin-top:8px}
 .art-info .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media (max-width:980px){.art-info .info-grid{grid-template-columns:1fr}}
@@ -120,20 +178,7 @@ input[type="search"]{min-width:220px}
 .stat-fill{position:absolute;inset:0 auto 0 0;width:0%;background:var(--stat-color,var(--accent));box-shadow:0 0 0 6px var(--ring)}
 .stat-val{text-align:right;color:#f1f1f1}
 
-/* Status */
-.status{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
-.dot{width:8px;height:8px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 6px var(--ring)}
-.hidden{display:none!important}
-
-/* Slider Normal/Shiny */
-.toggle{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
-.toggle input{display:none}
-.slider{position:relative;width:48px;height:28px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);transition:background .2s,border-color .2s}
-.slider::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:999px;background:#f5f5f5;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:left .2s ease,transform .2s}
-.toggle input:checked + .slider{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
-.toggle input:checked + .slider::after{left:23px;transform:translateX(0)}
-
-/* Linha evolutiva */
+/* Evolução */
 .evo-chain{display:flex;flex-direction:column;gap:10px}
 .evo-path{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .evo-node{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--chip);border:1px solid rgba(255,255,255,.12);padding:8px 10px;border-radius:12px;cursor:pointer;min-width:84px}
@@ -143,7 +188,9 @@ input[type="search"]{min-width:220px}
 .evo-arrow{display:flex;align-items:center;gap:6px;color:var(--muted)}
 .evo-cond{font-size:11px;color:#f1f1f1;background:rgba(255,255,255,.08);padding:3px 6px;border-radius:999px;border:1px solid rgba(255,255,255,.12)}
 
-/* Team Builder */
+/* =========================
+   Team Builder
+   ========================= */
 .team-panel{display:grid;grid-template-rows:auto 1fr;gap:10px;min-height:420px}
 .team-actions{display:flex;align-items:center;gap:10px;justify-content:space-between}
 .team-grid{display:grid;grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px}
@@ -155,83 +202,62 @@ input[type="search"]{min-width:220px}
 .slot .sub{font-size:12px;color:var(--muted)}
 .slot .remove{margin-left:auto; background:none; border:none; color:#fca5a5; cursor:pointer}
 
-/* ===== Telas estreitas/altas (portrait) ===== */
-@media (max-aspect-ratio: 3/4), (max-width: 760px){
+/* =========================
+   Status
+   ========================= */
+.status{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 6px var(--ring)}
+.hidden{display:none!important}
+
+/* =========================
+   Slider Normal/Shiny
+   ========================= */
+.toggle{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.toggle input{display:none}
+.slider{position:relative;width:48px;height:28px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);transition:background .2s,border-color .2s}
+.slider::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:999px;background:#f5f5f5;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:left .2s ease,transform .2s}
+.toggle input:checked + .slider{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
+.toggle input:checked + .slider::after{left:23px;transform:translateX(0)}
+
+
+/* =========================
+   Desktop / telas largas
+   ========================= */
+@media (min-width:1024px) and (min-aspect-ratio:4/3){
+  .layout{
+    grid-template-columns: 360px 1fr;
+    gap:20px;
+    max-width:1600px;
+    margin-inline:auto;
+  }
+  .list{max-height: clamp(320px, 56vh, 68vh);}
+  /* cancela o aspect do mobile e volta ao painel alto */
+  .art-viewport{
+    aspect-ratio:auto;
+    height: clamp(360px, 58vh, 720px);
+    max-height:78vh;
+  }
+  .art-viewport img{
+    width:auto; height:100%; max-height:100%; max-width:100%; object-fit:contain;
+  }
+}
+
+/* Laptop médio */
+@media (min-width:900px) and (max-width:1023px){
+  .art-viewport{
+    aspect-ratio:auto;
+    height: clamp(320px, 54vh, 680px);
+  }
+  .art-viewport img{ width:auto; height:100%; max-width:100%; object-fit:contain; }
+}
+
+/* Portrait/estreito (reforços) */
+@media (max-aspect-ratio:3/4), (max-width:760px){
   header{
     grid-template-columns: 1fr;
-    grid-template-areas:
-      "title"
-      "nav"
-      "controls";
+    grid-template-areas: "title" "nav" "controls";
   }
-  .layout{grid-template-columns: 1fr;}
-  .art-viewport{height: clamp(300px, 70dvh, 78dvh);}
-  .list{max-height: clamp(180px, 32dvh, 42dvh);}
-  select, input[type="search"]{min-width: 140px;}
-}
-
-/* === 0) Nunca permitir overflow horizontal global === */
-html, body { max-width: 100%; overflow-x: hidden; }
-@supports (overflow-x: clip){ html, body { overflow-x: clip; } }
-
-/* === 1) Header ocupa a largura do container, não da viewport === */
-/* (remove o full-bleed com 100vw/margens negativas) */
-header{
-  width: 100%;
-  max-width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-  box-sizing: border-box;
-}
-
-/* === 2) Containers não podem “impor” uma largura mínima maior que a tela === */
-* { min-width: 0; } /* segurança global p/ flex/grid */
-.layout, #listPanel, .right, .panel, .panel-header, .panel-header .left,
-.range-indicator, .artbox, .art-meta {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* range de gerações quebra em várias linhas no mobile */
-.range-indicator{
-  flex: 1 1 auto;
-  overflow-wrap: anywhere;
-  white-space: normal;
-}
-.range-indicator .seg{ white-space: nowrap; }
-
-/* os itens da lista nunca passam da largura do painel */
-.poke-item{ width: 100%; }
-.poke-item .pill, .poke-item span { min-width: 0; }
-
-/* === 3) Exibidor com aspecto fixo + imagem contida === */
-/* O container passa a ter uma “tela” previsível, evitando jump/empurrão */
-.art-viewport{
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 1 / 1;             /* quadrado estável; pode trocar p/ 4/3 se preferir */
-  max-width: 100%;
-  height: auto;                     /* altura derivada do aspect-ratio */
-  min-height: 280px;
-  max-height: 66dvh;
-}
-
-/* A arte SEMPRE fica dentro do exibidor, sem usar dimensão intrínseca */
-.art-viewport img{
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  max-height: none;
-  object-fit: contain;
-  object-position: center;
-}
-
-/* === 4) Reforços para telas estreitas/altas === */
-@media (max-aspect-ratio: 3/4), (max-width: 760px){
-  .layout{ width: 100%; max-width: 100%; }
-  #listPanel, .right, .panel{ max-width: 100%; }
-  /* a lista não cresce demais quando expandida */
-  .list{ max-width: 100%; }
+  .layout{width:100%; max-width:100%;}
+  #listPanel, .right, .panel{max-width:100%}
+  .list{max-height: clamp(180px, 36vh, 46vh);}
 }
