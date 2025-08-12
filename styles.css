@@ -261,3 +261,33 @@ input[type="search"]{min-width:220px}
   #listPanel, .right, .panel{max-width:100%}
   .list{max-height: clamp(180px, 36vh, 46vh);}
 }
+
+/* Botão "Recolher/Expandir" quebra para a linha de baixo no mobile */
+@media (max-aspect-ratio: 3/4), (max-width: 760px){
+  .panel-header{
+    flex-wrap: wrap;    /* já está, mas reforçamos */
+  }
+
+  .panel-header .left{
+    order: 1;           /* título + faixas ficam na 1ª linha */
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  #toggleListBtn{
+    order: 2;                 /* botão vai para a 2ª linha */
+    flex: 1 1 100%;           /* ocupa a linha inteira (quebra) */
+    width: 100%;
+    white-space: normal;      /* permite quebrar texto se necessário */
+    text-align: center;       /* centraliza o texto do botão */
+    margin-top: 6px;          /* respiro entre as linhas */
+  }
+
+  /* faixas podem usar a largura toda sem empurrar o botão */
+  .range-indicator{
+    flex: 1 1 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+}
