@@ -169,3 +169,46 @@ input[type="search"]{min-width:220px}
   .list{max-height: clamp(180px, 32dvh, 42dvh);}
   select, input[type="search"]{min-width: 140px;}
 }
+
+/* 1) Nunca deixe a página criar scroll horizontal */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 2) Evitar que cabeçalhos/flex cresçam além da viewport */
+.panel, .right, .artbox, .list,
+.panel-header, .panel-header .left, .range-indicator {
+  min-width: 0;
+}
+
+/* Deixa o lado esquerdo do header da lista encolher se precisar */
+.panel-header .left { 
+  flex: 1 1 auto;
+}
+
+/* Range de gerações pode quebrar linha e encolher */
+.range-indicator {
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;   /* quebra onde precisar em telas estreitas */
+}
+
+/* 3) Arte nunca deve alargar o container */
+.art-viewport { 
+  overflow: hidden; /* corta qualquer estouro raro */
+}
+
+/* Remova a altura fixa 70% e use limites flexíveis */
+.art-viewport img{
+  max-width: 100%;           /* nunca mais largo que o container */
+  max-height: min(70dvh, 100%); /* ajusta bem em telas altas */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 4) Em telas bem estreitas, reforce largura 100% */
+@media (max-aspect-ratio: 3/4), (max-width: 760px){
+  .layout{ width:100%; }
+  #listPanel, .right, .panel { max-width: 100%; }
+}
