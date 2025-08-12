@@ -322,7 +322,6 @@ function setMode(next){
 function toggleList(){
   els.listPanel.classList.toggle('collapsed');
   const expanded = !els.listPanel.classList.contains('collapsed');
-  els.toggleListBtn.textContent = expanded ? 'Recolher' : 'Expandir';
   els.toggleListBtn.setAttribute('aria-expanded', String(expanded));
   els.toggleListBtn.dataset.userToggled = '1';
 }

@@ -281,3 +281,76 @@ input[type="search"]{min-width:220px}
   #listPanel, .right, .panel{max-width:100%}
   .list{max-height: clamp(180px, 36vh, 46vh);}
 }
+
+/* ===== Botão de Expandir/Recolher SEM texto em todos os devices ===== */
+#toggleListBtn{
+  /* some o texto, mantendo acessibilidade */
+  text-indent: -9999px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+
+  /* vira ícone */
+  position: relative;
+  width: 36px; height: 36px;
+  padding: 0 !important;
+  display: inline-grid; place-items: center;
+  border-radius: 10px;
+  font-size: 0 !important; /* segunda camada de segurança */
+}
+#toggleListBtn::before{
+  content: "⯆"; /* recolher quando expanded=true */
+  font-size: 18px; line-height: 1;
+  text-indent: 0; /* o pseudo-elemento continua visível */
+}
+#toggleListBtn[aria-expanded="false"]::before{
+  content: "⯈"; /* expandir */
+}
+
+/* no mobile, pode ir para a 2ª linha sem espremer nada */
+@media (max-width: 760px){
+  .panel-header{ flex-wrap: wrap; }
+  .panel-header .left{ order: 1; flex: 1 1 auto; min-width: 0; }
+  #toggleListBtn{ order: 2; }
+}
+
+/* ===== Arte SEMPRE centralizada; regras unificadas ===== */
+
+/* padrão (phones/tablets): viewport “quadrado” estável */
+.art-viewport{
+  display: grid;
+  place-items: center;          /* centra a imagem SEMPRE */
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  max-width: 100%;
+  height: auto;
+  min-height: 280px;
+  max-height: 66dvh;
+}
+
+/* a imagem se adapta ao retângulo do exibidor */
+.art-viewport img{
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* >= 900px (laptops/desktop): painel alto, ainda centralizado */
+@media (min-width: 900px){
+  .art-viewport{
+    aspect-ratio: auto;                 /* cancela o 1/1 */
+    height: clamp(360px, 58vh, 720px);  /* “vertical” elegante */
+    max-height: 78vh;
+    display: grid;
+    place-items: center;
+  }
+  .art-viewport img{
+    width: auto; height: 100%;
+    max-width: 100%; max-height: 100%;
+    object-fit: contain; object-position: center;
+  }
+}
