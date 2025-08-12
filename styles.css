@@ -170,29 +170,68 @@ input[type="search"]{min-width:220px}
   select, input[type="search"]{min-width: 140px;}
 }
 
-/* O exibidor vira uma tela fixa e a imagem sempre se adapta a ela */
+/* === 0) Nunca permitir overflow horizontal global === */
+html, body { max-width: 100%; overflow-x: hidden; }
+@supports (overflow-x: clip){ html, body { overflow-x: clip; } }
+
+/* === 1) Header ocupa a largura do container, não da viewport === */
+/* (remove o full-bleed com 100vw/margens negativas) */
+header{
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+}
+
+/* === 2) Containers não podem “impor” uma largura mínima maior que a tela === */
+* { min-width: 0; } /* segurança global p/ flex/grid */
+.layout, #listPanel, .right, .panel, .panel-header, .panel-header .left,
+.range-indicator, .artbox, .art-meta {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* range de gerações quebra em várias linhas no mobile */
+.range-indicator{
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.range-indicator .seg{ white-space: nowrap; }
+
+/* os itens da lista nunca passam da largura do painel */
+.poke-item{ width: 100%; }
+.poke-item .pill, .poke-item span { min-width: 0; }
+
+/* === 3) Exibidor com aspecto fixo + imagem contida === */
+/* O container passa a ter uma “tela” previsível, evitando jump/empurrão */
 .art-viewport{
   position: relative;
-  overflow: hidden;                 /* nunca deixa nada vazar para os lados */
-  height: clamp(280px, 66dvh, 620px);  /* pode manter o valor que já usa */
-  max-width: 100%;                  /* nunca maior que o container */
+  overflow: hidden;
+  aspect-ratio: 1 / 1;             /* quadrado estável; pode trocar p/ 4/3 se preferir */
+  max-width: 100%;
+  height: auto;                     /* altura derivada do aspect-ratio */
+  min-height: 280px;
+  max-height: 66dvh;
 }
 
-/* <<< regras novas PARA O <img id="art"> >>> */
+/* A arte SEMPRE fica dentro do exibidor, sem usar dimensão intrínseca */
 .art-viewport img{
-  display: block;                   /* remove “lacuna” de inline images */
-  position: relative;               /* não precisa absoluto */
-  width: 100%;                      /* ocupa 100% da largura do exibidor */
-  height: 100%;                     /* e 100% da altura do exibidor       */
-  max-width: none;                  /* ignora dimensões intrínsecas */
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
   max-height: none;
-  object-fit: contain;              /* adapta SEM distorcer (mantém proporção) */
-  object-position: center center;   /* centraliza a arte */
-  image-rendering: auto;
+  object-fit: contain;
+  object-position: center;
 }
 
-/* Cintos de segurança extras contra qualquer “alargamento” no mobile */
-html, body{max-width:100vw; overflow-x:hidden;}
-.layout, #listPanel, .right, .panel{max-width:100%; width:100%; min-width:0;}
-.panel, .panel-header, .panel-header .left, .range-indicator{min-width:0;}
-.range-indicator{flex:1 1 100%; overflow-wrap:anywhere;}
+/* === 4) Reforços para telas estreitas/altas === */
+@media (max-aspect-ratio: 3/4), (max-width: 760px){
+  .layout{ width: 100%; max-width: 100%; }
+  #listPanel, .right, .panel{ max-width: 100%; }
+  /* a lista não cresce demais quando expandida */
+  .list{ max-width: 100%; }
+}
