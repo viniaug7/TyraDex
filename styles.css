@@ -170,59 +170,29 @@ input[type="search"]{min-width:220px}
   select, input[type="search"]{min-width: 140px;}
 }
 
-/* --- 0) Segurança global contra overflow horizontal --- */
-html, body{
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-@supports (overflow-x: clip){
-  html, body{ overflow-x: clip; } /* browsers modernos evitam até "áreas fantasmas" */
-}
-
-/* --- 1) Header sempre full-bleed (100% da viewport), sem “sobra” à direita --- */
-header{
-  position: sticky; top: 0; left: 0; right: 0;
-  width: 100vw;           /* ocupar a viewport, não o conteúdo que alargou */
-  max-width: 100vw;
-  margin-left: calc(50% - 50vw);   /* truque de full-bleed */
-  margin-right: calc(50% - 50vw);
-  box-sizing: border-box;
+/* O exibidor vira uma tela fixa e a imagem sempre se adapta a ela */
+.art-viewport{
+  position: relative;
+  overflow: hidden;                 /* nunca deixa nada vazar para os lados */
+  height: clamp(280px, 66dvh, 620px);  /* pode manter o valor que já usa */
+  max-width: 100%;                  /* nunca maior que o container */
 }
 
-/* --- 2) Layout jamais pode ficar mais largo que a viewport no mobile --- */
-.layout{
-  width: 100%;
-  max-width: 100vw;
-}
-#listPanel, .right, .panel{ width: 100%; max-width: 100%; min-width: 0; }
-.panel, .panel-header, .panel-header .left, .range-indicator{ min-width: 0; }
-
-/* O indicador de faixas (001–151 | ...) não pode causar overflow */
-.range-indicator{
-  flex: 1 1 100%;
-  min-width: 0;
-  overflow: hidden;
-  overflow-wrap: anywhere;   /* quebra em múltiplas linhas se precisar */
-}
-.range-indicator .seg{ white-space: nowrap; }
-
-/* --- 3) Arte nunca alarga o container quando carrega --- */
-.art-viewport{ overflow: hidden; }
+/* <<< regras novas PARA O <img id="art"> >>> */
 .art-viewport img{
-  display: block;
-  max-width: 100%;
-  width: 100%;          /* usa a largura do container */
-  height: auto;         /* mantém proporção sem forçar altura fixa */
-  object-fit: contain;
+  display: block;                   /* remove “lacuna” de inline images */
+  position: relative;               /* não precisa absoluto */
+  width: 100%;                      /* ocupa 100% da largura do exibidor */
+  height: 100%;                     /* e 100% da altura do exibidor       */
+  max-width: none;                  /* ignora dimensões intrínsecas */
+  max-height: none;
+  object-fit: contain;              /* adapta SEM distorcer (mantém proporção) */
+  object-position: center center;   /* centraliza a arte */
+  image-rendering: auto;
 }
 
-/* --- 4) Reforços específicos para telas estreitas/altas (portrait) --- */
-@media (max-aspect-ratio: 3/4), (max-width: 760px){
-  .layout{
-    width: 100vw;
-    max-width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-  }
-  #listPanel, .right, .panel{ max-width: 100%; }
-}
+/* Cintos de segurança extras contra qualquer “alargamento” no mobile */
+html, body{max-width:100vw; overflow-x:hidden;}
+.layout, #listPanel, .right, .panel{max-width:100%; width:100%; min-width:0;}
+.panel, .panel-header, .panel-header .left, .range-indicator{min-width:0;}
+.range-indicator{flex:1 1 100%; overflow-wrap:anywhere;}
