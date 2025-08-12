@@ -67,7 +67,7 @@ select:focus,input[type="search"]:focus{border-color:var(--accent);box-shadow:0 
 input[type="search"]{min-width:220px}
 
 /* =========================
-   Layout principal (sem sidebar)
+   Layout principal
    ========================= */
 .layout{display:grid;grid-template-columns: 360px 1fr; gap:16px; padding:16px}
 @media (max-width:1100px){ .layout{grid-template-columns: 320px 1fr;} }
@@ -96,9 +96,16 @@ input[type="search"]{min-width:220px}
 .panel-header .left{
   display:flex; align-items:center; gap:10px; flex:1 1 auto; min-width:0;
 }
+
+/* Botão só com seta (texto fica acessível, mas invisível) */
 #toggleListBtn{
-  flex:0 0 auto; white-space:nowrap; padding-inline:12px;
+  font-size:0; width:36px; height:36px; padding:0;
+  display:inline-grid; place-items:center; border-radius:10px; flex:0 0 auto;
 }
+#toggleListBtn::before{
+  content:"⯆"; font-size:18px; line-height:1;
+}
+#toggleListBtn[aria-expanded="false"]::before{ content:"⯈"; }
 
 /* Indicador de faixas (001–151 | …) */
 .range-indicator{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1 1 100%;min-width:0;overflow-wrap:anywhere;white-space:normal}
@@ -110,6 +117,13 @@ input[type="search"]{min-width:220px}
 /* Ao recolher a lista */
 #listPanel.collapsed .list, #listPanel.collapsed .status{display:none}
 #listPanel.collapsed .panel-header{background:rgba(255,255,255,.04)}
+
+/* Mobile: botão pode cair pra linha de baixo sem espremer texto */
+@media (max-aspect-ratio: 3/4), (max-width: 760px){
+  .panel-header{ flex-wrap: wrap; }
+  .panel-header .left{ order:1; flex:1 1 auto; }
+  #toggleListBtn{ order:2; }
+}
 
 /* =========================
    Lista de Pokémon
@@ -147,12 +161,17 @@ input[type="search"]{min-width:220px}
 /* MOBILE/PORTRAIT: tela estável (sem deslocar a página) */
 .art-viewport{
   position:relative; overflow:hidden;
-  aspect-ratio: 1 / 1;       /* estável no mobile */
+  display:grid; place-items:center;      /* centraliza sempre */
+  aspect-ratio: 1 / 1;                   /* estável no mobile */
   max-width:100%; height:auto; min-height:280px; max-height:66dvh;
   background:radial-gradient(600px 320px at 50% 10%, rgba(239,68,68,.15), transparent 40%),linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
   border-radius:16px;border:1px solid rgba(255,255,255,.1);
 }
-.art-viewport img{display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;object-position:center;filter:drop-shadow(0 40px 50px rgba(0,0,0,.35));transition:opacity .18s ease}
+.art-viewport img{
+  display:block;width:100%;height:100%;max-width:none;max-height:none;
+  object-fit:contain; object-position:center;
+  filter:drop-shadow(0 40px 50px rgba(0,0,0,.35)); transition:opacity .18s ease;
+}
 .art-viewport img.fading{opacity:0}
 .art-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
@@ -219,7 +238,6 @@ input[type="search"]{min-width:220px}
 .toggle input:checked + .slider{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
 .toggle input:checked + .slider::after{left:23px;transform:translateX(0)}
 
-
 /* =========================
    Desktop / telas largas
    ========================= */
@@ -236,9 +254,10 @@ input[type="search"]{min-width:220px}
     aspect-ratio:auto;
     height: clamp(360px, 58vh, 720px);
     max-height:78vh;
+    display:grid; place-items:center; /* centraliza sempre */
   }
   .art-viewport img{
-    width:auto; height:100%; max-height:100%; max-width:100%; object-fit:contain;
+    width:auto; height:100%; max-height:100%; max-width:100%; object-fit:contain; object-position:center;
   }
 }
 
@@ -247,8 +266,9 @@ input[type="search"]{min-width:220px}
   .art-viewport{
     aspect-ratio:auto;
     height: clamp(320px, 54vh, 680px);
+    display:grid; place-items:center;
   }
-  .art-viewport img{ width:auto; height:100%; max-width:100%; object-fit:contain; }
+  .art-viewport img{ width:auto; height:100%; max-width:100%; object-fit:contain; object-position:center; }
 }
 
 /* Portrait/estreito (reforços) */
@@ -260,34 +280,4 @@ input[type="search"]{min-width:220px}
   .layout{width:100%; max-width:100%;}
   #listPanel, .right, .panel{max-width:100%}
   .list{max-height: clamp(180px, 36vh, 46vh);}
-}
-
-/* Botão "Recolher/Expandir" quebra para a linha de baixo no mobile */
-@media (max-aspect-ratio: 3/4), (max-width: 760px){
-  .panel-header{
-    flex-wrap: wrap;    /* já está, mas reforçamos */
-  }
-
-  .panel-header .left{
-    order: 1;           /* título + faixas ficam na 1ª linha */
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  #toggleListBtn{
-    order: 2;                 /* botão vai para a 2ª linha */
-    flex: 1 1 100%;           /* ocupa a linha inteira (quebra) */
-    width: 100%;
-    white-space: normal;      /* permite quebrar texto se necessário */
-    text-align: center;       /* centraliza o texto do botão */
-    margin-top: 6px;          /* respiro entre as linhas */
-  }
-
-  /* faixas podem usar a largura toda sem empurrar o botão */
-  .range-indicator{
-    flex: 1 1 100%;
-    min-width: 0;
-    overflow-wrap: anywhere;
-    white-space: normal;
-  }
 }
