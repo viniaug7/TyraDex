@@ -22,7 +22,7 @@ const els = {
   toggleListBtn: document.getElementById('toggleListBtn'),
   rangeIndicator: document.getElementById('rangeIndicator'),
   evoBox: document.getElementById('evoBox'),
-  // nav
+  // nav (topo)
   navPokedex: document.getElementById('navPokedex'),
   navTeam: document.getElementById('navTeam'),
   pokedexPanel: document.getElementById('pokedexPanel'),
@@ -31,10 +31,6 @@ const els = {
   teamCount: document.getElementById('teamCount'),
   clearTeamBtn: document.getElementById('clearTeamBtn'),
   listPanel: document.getElementById('listPanel'),
-  // sidebar
-  layout: document.getElementById('layout'),
-  sidebar: document.getElementById('sidebar'),
-  toggleSidebar: document.getElementById('toggleSidebar'),
 };
 
 let current = { species:null };
@@ -43,41 +39,23 @@ let team = loadTeam();
 
 const isShiny = () => !!els.shinyToggle.checked;
 
-/* ---------- Sidebar collapsible ---------- */
-function applySidebarState(collapsed){
-  els.sidebar.classList.toggle('collapsed', collapsed);
-  els.layout.classList.toggle('sidebar-collapsed', collapsed);
-  els.toggleSidebar.setAttribute('aria-expanded', String(!collapsed));
-  els.toggleSidebar.setAttribute('title', collapsed ? 'Expandir menu' : 'Recolher menu');
-  els.toggleSidebar.textContent = collapsed ? '▶' : '◀';
-  try{ localStorage.setItem('sidebarCollapsed', JSON.stringify(collapsed)); }catch{}
-}
-function restoreSidebarState(){
-  let collapsed = false;
-  try{
-    const raw = localStorage.getItem('sidebarCollapsed');
-    if(raw!=null) collapsed = JSON.parse(raw);
-  }catch{}
-  applySidebarState(collapsed);
-}
-
-/* ---------- Init controls ---------- */
+/* ========== Init controls ========== */
 async function initControls(){
-  // Gerações
   const gens = await api.listGenerations();
   els.gen.innerHTML = `<option value="any-gen">Qualquer Gen</option>` +
     gens.map(g=>`<option value="${g.name}">Geração ${g.id}</option>`).join('');
-  // Tipos
+
   const types = await api.listTypes();
   els.type.innerHTML = ['<option value="any">Qualquer tipo</option>']
     .concat(types.map(t=>`<option value="${t.name}">${util.cap(t.name)}</option>`)).join('');
+
   els.gen.value='any-gen'; els.type.value='any';
 }
 
 function setStatus(t){ els.status.classList.remove('hidden'); els.statusText.textContent=t; }
 function clearStatus(){ els.status.classList.add('hidden'); }
 
-/* ---------- List ---------- */
+/* ========== Lista ========== */
 async function loadList(){
   setStatus('Carregando lista…');
   const genName = els.gen.value, typeName = els.type.value, q = els.q.value.trim().toLowerCase();
@@ -146,7 +124,7 @@ function onListItemClick(species, li){
   else { toggleTeam(species, li); }
 }
 
-/* ---------- Pokédex ---------- */
+/* ========== Pokédex ========== */
 function showArt(species){
   const url = util.artworkUrlById(species.id, isShiny());
   els.art.classList.add('fading');
@@ -231,7 +209,7 @@ function renderStats(stats){
   });
 }
 
-/* Evoluções (inalterado) */
+/* ========== Evoluções ========== */
 async function renderEvolution(pokemonName){
   els.evoBox.innerHTML = '<div class="pill">Carregando…</div>';
   const species = await api.getSpecies(pokemonName);
@@ -274,7 +252,7 @@ function buildPathRow(nodes, conds){
   return row;
 }
 
-/* ---------- Team Builder ---------- */
+/* ========== Team Builder ========== */
 function renderTeam(){
   els.teamGrid.innerHTML = '';
   els.teamCount.textContent = team.length;
@@ -301,7 +279,6 @@ function renderTeam(){
     els.teamGrid.appendChild(slot);
   }
 
-  // marcar na lista
   document.querySelectorAll('.poke-item').forEach(li=>{
     const id = Number(li.getAttribute('data-id'));
     li.classList.toggle('team-selected', team.some(t=>t.id===id));
@@ -332,7 +309,7 @@ function clearTeam(){
   renderTeam();
 }
 
-/* ---------- Nav / modos ---------- */
+/* ========== Navegação (tabs do topo) ========== */
 function setMode(next){
   mode = next;
   els.navPokedex.classList.toggle('active', mode==='pokedex');
@@ -347,9 +324,28 @@ function toggleList(){
   const expanded = !els.listPanel.classList.contains('collapsed');
   els.toggleListBtn.textContent = expanded ? 'Recolher' : 'Expandir';
   els.toggleListBtn.setAttribute('aria-expanded', String(expanded));
+  els.toggleListBtn.dataset.userToggled = '1';
 }
 
-/* ---------- Events ---------- */
+/* ===== Responsivo: colapsar lista por padrão em portrait ===== */
+function isPortraitish(){
+  return window.matchMedia('(max-aspect-ratio: 3/4)').matches || window.innerWidth <= 760;
+}
+let resizeTimer;
+function onResize(){
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>{
+    if(isPortraitish()){
+      if(!els.toggleListBtn.dataset.userToggled){
+        els.listPanel.classList.add('collapsed');
+        els.toggleListBtn.textContent = 'Expandir';
+        els.toggleListBtn.setAttribute('aria-expanded','false');
+      }
+    }
+  }, 120);
+}
+
+/* ========== Listeners ========== */
 let qTimer; 
 els.q.addEventListener('input',()=>{ clearTimeout(qTimer); qTimer=setTimeout(loadList,180); });
 els.gen.addEventListener('change', loadList);
@@ -359,16 +355,18 @@ els.toggleListBtn.addEventListener('click', toggleList);
 els.navPokedex.addEventListener('click', ()=> setMode('pokedex'));
 els.navTeam.addEventListener('click', ()=> { setMode('team'); renderTeam(); });
 els.clearTeamBtn.addEventListener('click', clearTeam);
-els.toggleSidebar.addEventListener('click', ()=>{
-  const collapsed = !els.sidebar.classList.contains('collapsed');
-  applySidebarState(collapsed);
-});
+window.addEventListener('resize', onResize);
 
-/* ---------- Boot ---------- */
+/* ========== Boot ========== */
 (async function(){
   try{
-    restoreSidebarState();
     await initControls();
+    // primeira carga: se portrait, começa com a lista recolhida
+    if(isPortraitish()){
+      els.listPanel.classList.add('collapsed');
+      els.toggleListBtn.textContent = 'Expandir';
+      els.toggleListBtn.setAttribute('aria-expanded','false');
+    }
     await loadList();
     renderTeam();
   }catch(err){

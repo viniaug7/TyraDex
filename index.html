@@ -14,6 +14,14 @@
       <div class="logo" aria-hidden="true"></div>
       <h1>Pokédex</h1>
     </div>
+
+    <!-- NAV NO TOPO -->
+    <nav class="topnav" aria-label="Mudar modo">
+      <button id="navPokedex" class="tab active">Pokédex</button>
+      <button id="navTeam" class="tab">Team Builder</button>
+    </nav>
+
+    <!-- Controles globais -->
     <div class="controls">
       <div class="control">
         <label for="gen">Geração</label>
@@ -39,23 +47,7 @@
   </header>
 
   <div class="layout" id="layout">
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-head">
-        <button id="toggleSidebar" class="iconbtn" aria-label="Recolher menu" aria-expanded="true" title="Recolher menu">◀</button>
-      </div>
-      <div class="nav">
-        <button id="navPokedex" class="active" title="Modo Pokédex">
-          <span class="ico">📘</span><span class="label">Modo Pokédex</span>
-        </button>
-        <button id="navTeam" title="Team Builder">
-          <span class="ico">🧩</span><span class="label">Team Builder</span>
-        </button>
-        <div class="small helper">Dica: no Team Builder clique nos itens da lista para (des)selecionar.</div>
-      </div>
-    </aside>
-
-    <!-- Lista -->
+    <!-- Lista (coluna esquerda) -->
     <section class="panel" id="listPanel">
       <div class="panel-header">
         <div class="left">
@@ -68,7 +60,7 @@
       <div class="list" id="list"></div>
     </section>
 
-    <!-- Painéis à direita -->
+    <!-- Coluna direita: Pokédex / Team -->
     <section class="right">
       <!-- Pokédex -->
       <section class="panel artbox" id="pokedexPanel">
@@ -84,6 +76,7 @@
           <span class="pill" id="metaName">—</span>
           <span class="pill" id="metaId">#—</span>
           <span class="pill" id="metaGen">Gen —</span>
+          <!-- badges de tipos ficam aqui -->
           <div id="metaTypes" class="badges"></div>
         </div>
 
