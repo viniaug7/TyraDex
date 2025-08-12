@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pokédex — PokéAPI</title>
+  <link rel="preconnect" href="https://pokeapi.co">
+  <link rel="preconnect" href="https://raw.githubusercontent.com">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="title">
+      <div class="logo" aria-hidden="true"></div>
+      <h1>Pokédex</h1>
+    </div>
+    <div class="controls">
+      <div class="control">
+        <label for="gen">Geração</label>
+        <select id="gen" aria-label="Selecionar geração"></select>
+      </div>
+      <div class="control">
+        <label for="type">Tipo</label>
+        <select id="type" aria-label="Selecionar tipo"></select>
+      </div>
+      <div class="control">
+        <label for="q">Buscar</label>
+        <input id="q" type="search" placeholder="Filtrar por nome…" />
+      </div>
+      <div class="control">
+        <label for="shinyToggle">Variante</label>
+        <label class="toggle">
+          <input id="shinyToggle" type="checkbox" aria-label="Alternar shiny" />
+          <span class="slider"></span>
+          <span class="toggle-text">Normal / Shiny</span>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout" id="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <button id="toggleSidebar" class="iconbtn" aria-label="Recolher menu" aria-expanded="true" title="Recolher menu">◀</button>
+      </div>
+      <div class="nav">
+        <button id="navPokedex" class="active" title="Modo Pokédex">
+          <span class="ico">📘</span><span class="label">Modo Pokédex</span>
+        </button>
+        <button id="navTeam" title="Team Builder">
+          <span class="ico">🧩</span><span class="label">Team Builder</span>
+        </button>
+        <div class="small helper">Dica: no Team Builder clique nos itens da lista para (des)selecionar.</div>
+      </div>
+    </aside>
+
+    <!-- Lista -->
+    <section class="panel" id="listPanel">
+      <div class="panel-header">
+        <div class="left">
+          <span>Lista de Pokémon</span>
+          <div id="rangeIndicator" class="range-indicator"></div>
+        </div>
+        <button id="toggleListBtn" aria-label="Recolher lista" class="btn" aria-expanded="true">Recolher</button>
+      </div>
+      <div class="status" id="status"><span class="dot"></span> <span id="statusText">Carregando…</span></div>
+      <div class="list" id="list"></div>
+    </section>
+
+    <!-- Painéis à direita -->
+    <section class="right">
+      <!-- Pokédex -->
+      <section class="panel artbox" id="pokedexPanel">
+        <div class="art-viewport" id="artViewport" aria-live="polite">
+          <div id="placeholder" class="art-placeholder" style="text-align:center; padding:24px; color:var(--muted)">
+            <p style="margin:0 0 6px">Selecione um Pokémon na lista</p>
+            <small>Dica: combine <b>Geração</b> + <b>Tipo</b> para reduzir a lista</small>
+          </div>
+          <img id="art" alt="Official artwork do Pokémon selecionado" class="hidden" />
+        </div>
+
+        <div class="art-meta">
+          <span class="pill" id="metaName">—</span>
+          <span class="pill" id="metaId">#—</span>
+          <span class="pill" id="metaGen">Gen —</span>
+          <div id="metaTypes" class="badges"></div>
+        </div>
+
+        <section class="art-info panel">
+          <div class="info-grid">
+            <div class="info-block">
+              <h3>Habilidades</h3>
+              <div id="abilitiesBox" class="badges"></div>
+            </div>
+            <div class="info-block">
+              <h3>Stats base</h3>
+              <div id="statsBox" class="stats"></div>
+            </div>
+            <div class="info-block" style="grid-column:1 / -1">
+              <h3>Linha evolutiva</h3>
+              <div id="evoBox" class="evo-chain"></div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- Team Builder -->
+      <section class="panel team-panel hidden" id="teamPanel">
+        <div class="team-actions">
+          <div><strong>Seu time</strong> (<span id="teamCount">0</span>/6)</div>
+          <div><button id="clearTeamBtn" class="btn">Limpar time</button></div>
+        </div>
+        <div id="teamGrid" class="team-grid"></div>
+      </section>
+    </section>
+  </div>
+
+  <div class="footer" style="text-align:center;color:var(--muted);font-size:12px;padding:10px">
+    Dados fornecidos por <a href="https://pokeapi.co/" target="_blank" rel="noopener" style="color:var(--accent)">PokéAPI</a>. Este é um cliente não-oficial.
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
