@@ -170,45 +170,59 @@ input[type="search"]{min-width:220px}
   select, input[type="search"]{min-width: 140px;}
 }
 
-/* 1) Nunca deixe a página criar scroll horizontal */
-html, body {
-  max-width: 100%;
+/* --- 0) Segurança global contra overflow horizontal --- */
+html, body{
+  max-width: 100vw;
   overflow-x: hidden;
 }
+@supports (overflow-x: clip){
+  html, body{ overflow-x: clip; } /* browsers modernos evitam até "áreas fantasmas" */
+}
 
-/* 2) Evitar que cabeçalhos/flex cresçam além da viewport */
-.panel, .right, .artbox, .list,
-.panel-header, .panel-header .left, .range-indicator {
+/* --- 1) Header sempre full-bleed (100% da viewport), sem “sobra” à direita --- */
+header{
+  position: sticky; top: 0; left: 0; right: 0;
+  width: 100vw;           /* ocupar a viewport, não o conteúdo que alargou */
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);   /* truque de full-bleed */
+  margin-right: calc(50% - 50vw);
+  box-sizing: border-box;
+}
+
+/* --- 2) Layout jamais pode ficar mais largo que a viewport no mobile --- */
+.layout{
+  width: 100%;
+  max-width: 100vw;
+}
+#listPanel, .right, .panel{ width: 100%; max-width: 100%; min-width: 0; }
+.panel, .panel-header, .panel-header .left, .range-indicator{ min-width: 0; }
+
+/* O indicador de faixas (001–151 | ...) não pode causar overflow */
+.range-indicator{
+  flex: 1 1 100%;
   min-width: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;   /* quebra em múltiplas linhas se precisar */
 }
+.range-indicator .seg{ white-space: nowrap; }
 
-/* Deixa o lado esquerdo do header da lista encolher se precisar */
-.panel-header .left { 
-  flex: 1 1 auto;
-}
-
-/* Range de gerações pode quebrar linha e encolher */
-.range-indicator {
-  flex: 1 1 auto;
-  overflow-wrap: anywhere;   /* quebra onde precisar em telas estreitas */
-}
-
-/* 3) Arte nunca deve alargar o container */
-.art-viewport { 
-  overflow: hidden; /* corta qualquer estouro raro */
-}
-
-/* Remova a altura fixa 70% e use limites flexíveis */
+/* --- 3) Arte nunca alarga o container quando carrega --- */
+.art-viewport{ overflow: hidden; }
 .art-viewport img{
-  max-width: 100%;           /* nunca mais largo que o container */
-  max-height: min(70dvh, 100%); /* ajusta bem em telas altas */
-  width: auto;
-  height: auto;
+  display: block;
+  max-width: 100%;
+  width: 100%;          /* usa a largura do container */
+  height: auto;         /* mantém proporção sem forçar altura fixa */
   object-fit: contain;
 }
 
-/* 4) Em telas bem estreitas, reforce largura 100% */
+/* --- 4) Reforços específicos para telas estreitas/altas (portrait) --- */
 @media (max-aspect-ratio: 3/4), (max-width: 760px){
-  .layout{ width:100%; }
-  #listPanel, .right, .panel { max-width: 100%; }
+  .layout{
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+  #listPanel, .right, .panel{ max-width: 100%; }
 }
